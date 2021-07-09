@@ -1,28 +1,50 @@
 
 import React, { useState } from 'react';
-import { Button, View, Text, TextInput } from 'react-native';
+import { Button, View, TextInput } from 'react-native';
+import { ListItem } from 'react-native-elements'
+// import FontAwesome, {
+//   SolidIcons,
+//   RegularIcons,
+//   BrandIcons,
+//   parseIconFromClassName,
+// } from 'react-native-fontawesome';
 
 const App = () => {
-  const [searchReuslt, setSearchReuslt] = useState('');
-  const [employee, setEmployee] = useState('');
+  
+  
   const employeeList = [{id: "1", name: "Snehankur"},
           {id: "2", name: "Kedar"},
           {id: "3", name: "Swapnil"}
          ];
+  const [employee, setEmployee] = useState('');
+  const [searchResult, setSearchResult] = useState();
+  const [found, setFound] = useState(false);
+  employesSearch = employeeList;
+  
+  clear =()=>{
+    setFound(false);
+  }
 
   findName =()=>{
+          employesSearch = employeeList;
           let found = false;
-
           employeeList.map((item)=>{
+             
               if(item.name==employee)
               {
+                employesSearch = [];
+                employesSearch.push(item);
+                setSearchResult(employesSearch);
                 found=true;
-                setSearchReuslt("found name: "+item.name);
-              }
+                setFound(found);
+              } 
           });
-          if(!found){
-            setSearchReuslt(employee+" Not Found");
-          }
+
+          if(!found)
+          {
+            setSearchResult([{id: "1", name: employee+" Not found"}]);
+            setFound(true);
+          }      
       }
 
   return (
@@ -33,9 +55,31 @@ const App = () => {
        onChangeText={employee => setEmployee(employee)}
        defaultValue={employee}
      /> 
-    <Button onPress={findName} title="Search" />
+     <Button onPress={findName} title="Search" />
+     <Button onPress={clear} title="Clear" />
+    
+     { found &&
+    searchResult.map((l, i) => (
+      <ListItem key={i} >
+        <ListItem.Content>
+          <ListItem.Title>{l.name}</ListItem.Title>
+        </ListItem.Content>
+      </ListItem>
+    ))
+  }
 
-    <Text style="top:100px;"> Search Result: {searchReuslt}</Text>
+{ !found &&
+    employeeList.map((l, i) => (
+      <ListItem key={i} >
+        <ListItem.Content>
+          <ListItem.Title>{l.name}</ListItem.Title>
+        </ListItem.Content>
+      </ListItem>
+    ))
+  }
+    
+    
+   
     </View>
   );
 };
